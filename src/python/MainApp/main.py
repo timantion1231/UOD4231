@@ -1,7 +1,7 @@
 #import AI
 import sys
 from PyQt5.QtWidgets import QApplication
-from UI.MainForm import MainForm, runApp
+from UI.MainForm import MainForm, run_app
 
 if __name__ == '__main__':
     '''   
@@ -13,5 +13,6 @@ if __name__ == '__main__':
     print('\nСловарь слов и их индексы:')
     print(word_index)
     '''
-    runApp()
+
+    run_app()
 
