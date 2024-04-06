@@ -1,16 +1,20 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QScrollArea, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QTextEdit
 from PyQt5.QtGui import QPixmap, QColor
+import Message
 
 class MessageWidget(QWidget):
-    def __init__(self, username, message, action):
+    __message: Message
+    #, username, message, action
+    def __init__(self, message:Message):
         super(MessageWidget, self).__init__()
-
-        if action == 'ban':
+        self.__message = message
+        status = message.get_status()
+        if status == 'ban':
             background_color = "red"
-        elif action == 'mute':
+        elif status == 'mute':
             background_color = "yellow"
-        elif action == 'warning':
+        elif status == 'warning':
             background_color = "green"
         else:
             background_color = "transparent"
@@ -21,11 +25,11 @@ class MessageWidget(QWidget):
         # pixmap = QPixmap(image_path)
         # image_label = QLabel()
         # image_label.setPixmap(pixmap)
-
-        username_label = QLabel(username)
+        messages = message.get_user_from_message().get_username()
+        username_label = QLabel(messages)
         username_label.setStyleSheet("color: black; font-weight: bold;")
 
-        text_label = QLabel(message)
+        text_label = QLabel(message.get_message())
 
         #layout.addWidget(image_label)
         layout.addWidget(username_label)

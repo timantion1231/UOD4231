@@ -4,6 +4,8 @@ from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QScrollArea, QVB
     QPushButton, QLineEdit, QTextEdit
 from UI.usersWidget import UserWidget
 from UI.MessageWidgets import MessageWidget
+import User
+import Message
 
 
 class MainForm(QWidget):
@@ -18,6 +20,8 @@ class MainForm(QWidget):
     __user_scroll_area_widget = ''
     __user_scroll_area_layout = ''
 
+    __user_list = []
+    __message_list = []
     def __init__(self):
         super(MainForm, self).__init__()
         self.setGeometry(150, 150, 800, 800)
@@ -39,7 +43,8 @@ class MainForm(QWidget):
                 act = "warning"
             else:
                 act = "pass"
-            self.__add_user(f"User {i + 1}", f"Message {i + 1}", act)
+            usr = User.User(f"User {i + 1}", self.__user_path, act)
+            self.__add_user(usr)
 
         self.__message_scroll_area = QScrollArea()
         self.__message_scroll_area.setWidgetResizable(True)
@@ -57,7 +62,8 @@ class MainForm(QWidget):
                 act = "warning"
             else:
                 act = "pass"
-            self.__add_message(f"User {i + 1}", f"Message {i + 1}", act)
+            msg = Message.Message(self.__user_list[i], f"Message {i + 1}", act)
+            self.__add_message(msg)
 
         buttons_layout = QHBoxLayout()
 
@@ -85,19 +91,21 @@ class MainForm(QWidget):
         self.__grid_layout.addWidget(text_field, 2, 0)
         self.__grid_layout.addWidget(send_button, 2, 1)
 
-    def __add_user(self, username, message, action):
+    def __add_user(self, user: User):
 
         self.__user_scroll_area_layout.addWidget(
-            UserWidget(self.__user_path, username, message, action))
+            UserWidget(user))
 
         self.__grid_layout.addWidget(self.__user_scroll_area, 0, 0)
+        self.__user_list.append(user)
 
-    def __add_message(self, username, message, action):
+    def __add_message(self, message: Message):
 
         self.__message_scroll_area_layout.addWidget(
-            MessageWidget(username, message, action))
+            MessageWidget(message))
 
         self.__grid_layout.addWidget(self.__message_scroll_area, 0, 1)
+        self.__message_list.append(message)
 
 
 def run_app():
