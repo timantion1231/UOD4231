@@ -6,10 +6,11 @@ from UI.usersWidget import UserWidget
 from UI.MessageWidgets import MessageWidget
 import User
 import Message
+from UI.AddMessage import *
 
 
 class MainForm(QWidget):
-    __user_path = 'D:/study/чмв/овтеты/design/free-icon-image-4577383.png'
+    __user_path = 'resources/user_icon.png'
     __grid_layout = ''
 
     __message_scroll_area = ''
@@ -22,6 +23,7 @@ class MainForm(QWidget):
 
     __user_list = []
     __message_list = []
+
     def __init__(self):
         super(MainForm, self).__init__()
         self.setGeometry(150, 150, 800, 800)
@@ -87,6 +89,7 @@ class MainForm(QWidget):
         text_field.setPlaceholderText("Введите текст сообщения...")
 
         send_button = QPushButton("Отправить")
+        send_button.clicked.connect(self.__btn_send_click)
 
         self.__grid_layout.addWidget(text_field, 2, 0)
         self.__grid_layout.addWidget(send_button, 2, 1)
@@ -106,6 +109,14 @@ class MainForm(QWidget):
 
         self.__grid_layout.addWidget(self.__message_scroll_area, 0, 1)
         self.__message_list.append(message)
+
+    def __btn_send_click(self):
+        dialog = UI.AddMessage.UserSelectionDialog()
+        dialog.show()
+        dialog.user_selected.connect(self.selected_user)
+
+    def selected_user(self, user):
+        print(f"Выбран пользователь в главной форме: {user.get_username()}")
 
 
 def run_app():

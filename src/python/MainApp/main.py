@@ -1,4 +1,4 @@
-#import AI
+# import AI
 import sys
 from PyQt5.QtWidgets import QApplication
 from UI.MainForm import MainForm, run_app
@@ -15,4 +15,3 @@ if __name__ == '__main__':
     '''
 
     run_app()
-

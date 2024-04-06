@@ -36,3 +36,6 @@ class UserWidget(QWidget):
         layout.addWidget(text_label)
 
         self.setLayout(layout)
+
+    def get_user_fromWidget(self):
+        return self.__user
