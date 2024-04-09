@@ -9,7 +9,7 @@ class User:
     __avatar_path = ''
     __status = ''
 
-    def __init__(self, username, avatar_path, status):
+    def __init__(self, username, avatar_path='resources/user_icon.png', status='none'):
         self.__user_id = uuid.uuid4()
         self.__username = username
         self.__avatar_path = avatar_path

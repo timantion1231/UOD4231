@@ -9,6 +9,7 @@ import Message
 from UI.AddMessage import *
 
 
+
 class MainForm(QWidget):
     __user_path = 'resources/user_icon.png'
     __grid_layout = ''
@@ -113,10 +114,16 @@ class MainForm(QWidget):
     def __btn_send_click(self):
         dialog = UI.AddMessage.UserSelectionDialog()
         dialog.show()
+        self.setDisabled(True)
         dialog.user_selected.connect(self.selected_user)
+        dialog.cancel_selection.connect(self.cancel_selection)
 
     def selected_user(self, user):
         print(f"Выбран пользователь в главной форме: {user.get_username()}")
+        self.setDisabled(False)
+
+    def cancel_selection(self):
+        self.setDisabled(False)
 
 
 def run_app():
