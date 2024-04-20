@@ -14,6 +14,8 @@ class UserSelectionDialog(QDialog):
     __selected_user: User
     cancel_selection = pyqtSignal()
     __user_creation = None
+    
+    __list_widget = None
 
     def __init__(self):
         super().__init__()
@@ -23,23 +25,18 @@ class UserSelectionDialog(QDialog):
         self.selected_user_label = QLabel("Выбранный пользователь:")
         layout.addWidget(self.selected_user_label)
 
-        list_widget = QListWidget()
+        self.__list_widget = QListWidget()
 
-        for i in range(0, 10):
-            usr = User.User(f"User {i}", 'D:/study/чмв/овтеты/design/free-icon-image-4577383.png', "f")
-            uw = UI.usersWidget.UserWidget(usr)
-            item = QListWidgetItem()
-            list_widget.addItem(item)
-            list_widget.setItemWidget(item, uw)
+        self.__add_demo_users()
 
         def on_item_clicked(item):
-            widget: UI.usersWidget.UserWidget = list_widget.itemWidget(item)
+            widget: UI.usersWidget.UserWidget = self.__list_widget.itemWidget(item)
             self.__selected_user = widget.get_user_fromWidget()
             print("selected")
 
-        list_widget.itemClicked.connect(on_item_clicked)
+        self.__list_widget.itemClicked.connect(on_item_clicked)
 
-        layout.addWidget(list_widget)
+        layout.addWidget(self.__list_widget)
 
         create_user_button = QPushButton("Создать пользователя")
         create_user_button.clicked.connect(self.__btn_create_user_click)
@@ -57,6 +54,14 @@ class UserSelectionDialog(QDialog):
         layout.addLayout(buttons_layout)
 
         self.setLayout(layout)
+        
+    def __add_demo_users(self):
+        for i in range(0, 10):
+            usr = User.User(f"User {i}", 'D:/study/чмв/овтеты/design/free-icon-image-4577383.png', "f")
+            uw = UI.usersWidget.UserWidget(usr)
+            item = QListWidgetItem()
+            self.__list_widget.addItem(item)
+            self.__list_widget.setItemWidget(item, uw)
 
     def __btn_ok_clicked(self):
         print('ok clicked')
