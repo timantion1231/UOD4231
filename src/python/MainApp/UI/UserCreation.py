@@ -9,9 +9,9 @@ from User import User
 class UserCreationDialog(QDialog):
     created_user = pyqtSignal(User)
     __created_user: User
-    cansel_creating = pyqtSignal()
-    __username = ''
-    __text_field = ''
+    cancel_creating = pyqtSignal()
+    __username = None
+    __text_field = None
 
     def __init__(self):
         super().__init__()
@@ -27,7 +27,7 @@ class UserCreationDialog(QDialog):
         layout.addWidget(self.__text_field)
 
         ok_button = QPushButton('Ок')
-        ok_button.clicked.connect(self.__btn_ok_click())
+        ok_button.clicked.connect(self.__btn_ok_click)
         layout.addWidget(ok_button)
 
         cancel_button = QPushButton('Отмена')
@@ -37,10 +37,10 @@ class UserCreationDialog(QDialog):
         self.setLayout(layout)
 
     def __btn_ok_click(self):
-        self.created_user = User(self.__text_field.text())
+        print(f"printed: {self.__text_field.text()}")
+        self.created_user.emit(User(self.__text_field.text()))
+        self.accept()
 
     def __btn_cancel_click(self):
-        pass
-
-    def __chk_user(self, username):
-        pass
+        self.cancel_creating.emit()
+        self.reject()

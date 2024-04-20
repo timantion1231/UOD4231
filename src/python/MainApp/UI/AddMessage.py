@@ -6,12 +6,14 @@ from UI.UserCreation import *
 from PyQt5.QtCore import pyqtSignal
 
 import User, UI.usersWidget
+from UI.UserCreation import UserCreationDialog
 
 
 class UserSelectionDialog(QDialog):
     user_selected = pyqtSignal(User.User)
     __selected_user: User
     cancel_selection = pyqtSignal()
+    __user_creation = None
 
     def __init__(self):
         super().__init__()
@@ -66,15 +68,17 @@ class UserSelectionDialog(QDialog):
         self.reject()
 
     def __btn_create_user_click(self):
-        user_creation = UserCreationDialog()
-        user_creation.show()
-        self.setDisabled(True)
-        user_creation.created_user.connect(self.user_created)
-        user_creation.cansel_creating.connect(self.cancel_creation)
+        self.__user_creation = UserCreationDialog()
 
-    def user_created(self):
-        print("user_created")
+        self.__user_creation.created_user.connect(self.user_created)
+        self.__user_creation.cancel_creating.connect(self.cancel_creation)
+        self.__user_creation.show()
         self.setDisabled(True)
+
+    def user_created(self, user: User):
+        self.__selected_user = user
+        print(f"user_created{user}")
+        self.setDisabled(False)
 
     def cancel_creation(self):
-        self.setEnabled(True)
+        self.setDisabled(False)

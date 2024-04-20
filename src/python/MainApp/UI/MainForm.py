@@ -12,15 +12,15 @@ from UI.AddMessage import *
 
 class MainForm(QWidget):
     __user_path = 'resources/user_icon.png'
-    __grid_layout = ''
+    __grid_layout = None
 
-    __message_scroll_area = ''
-    __message_scroll_area_widget = ''
-    __message_scroll_area_layout = ''
+    __message_scroll_area = None
+    __message_scroll_area_widget = None
+    __message_scroll_area_layout = None
 
-    __user_scroll_area = ''
-    __user_scroll_area_widget = ''
-    __user_scroll_area_layout = ''
+    __user_scroll_area = None
+    __user_scroll_area_widget = None
+    __user_scroll_area_layout = None
 
     __user_list = []
     __message_list = []
