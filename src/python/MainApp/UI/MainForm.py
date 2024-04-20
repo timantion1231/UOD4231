@@ -9,7 +9,6 @@ import Message
 from UI.AddMessage import *
 
 
-
 class MainForm(QWidget):
     __user_path = 'resources/user_icon.png'
     __grid_layout = None
@@ -24,6 +23,10 @@ class MainForm(QWidget):
 
     __user_list = []
     __message_list = []
+
+    __dialog = None
+
+    __message_field = None
 
     def __init__(self):
         super(MainForm, self).__init__()
@@ -86,13 +89,13 @@ class MainForm(QWidget):
 
         self.__grid_layout.addLayout(buttons_layout, 1, 0, 1, 2)
 
-        text_field = QTextEdit()
-        text_field.setPlaceholderText("Введите текст сообщения...")
+        self.__message_field = QTextEdit()
+        self.__message_field.setPlaceholderText("Введите текст сообщения...")
 
         send_button = QPushButton("Отправить")
         send_button.clicked.connect(self.__btn_send_click)
 
-        self.__grid_layout.addWidget(text_field, 2, 0)
+        self.__grid_layout.addWidget(self.__message_field, 2, 0)
         self.__grid_layout.addWidget(send_button, 2, 1)
 
     def __add_user(self, user: User):
@@ -112,18 +115,22 @@ class MainForm(QWidget):
         self.__message_list.append(message)
 
     def __btn_send_click(self):
-        dialog = UI.AddMessage.UserSelectionDialog()
-        dialog.show()
+        self.__dialog = UI.AddMessage.UserSelectionDialog()
+        self.__dialog.show()
         self.setDisabled(True)
-        dialog.user_selected.connect(self.selected_user)
-        dialog.cancel_selection.connect(self.cancel_selection)
+        self.__dialog.user_selected.connect(self.selected_user)
+        self.__dialog.cancel_selection.connect(self.cancel_selection)
 
     def selected_user(self, user):
         print(f"Выбран пользователь в главной форме: {user.get_username()}")
         self.setDisabled(False)
+        msg_text = self.__message_field.toPlainText()
+        msg = Message.Message(user, msg_text, 'f')
+        self.__add_message(msg)
 
     def cancel_selection(self):
         self.setDisabled(False)
+
 
 
 def run_app():
