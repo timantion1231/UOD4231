@@ -2,10 +2,10 @@ import uuid
 import User
 
 class Message:
-    __message_id = ''
+    __message_id = None
     __user: User
-    __message_text = ''
-    __message_status = ''
+    __message_text = None
+    __message_status = None
 
     def __init__(self, user: User, message, status):
         self.__message_id = uuid.uuid4()

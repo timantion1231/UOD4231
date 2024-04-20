@@ -4,10 +4,10 @@ import Message
 
 class User:
     __messages_id = []
-    __user_id = ''
-    __username = ''
-    __avatar_path = ''
-    __user_status = ''
+    __user_id = None
+    __username = None
+    __avatar_path = None
+    __user_status = None
 
     def __init__(self, username, avatar_path='resources/user_icon.png', status='none'):
         self.__user_id = uuid.uuid4()
