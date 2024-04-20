@@ -38,38 +38,15 @@ class MainForm(QWidget):
         self.__user_scroll_area_widget = QWidget()
         self.__user_scroll_area_layout = QVBoxLayout(self.__user_scroll_area_widget)
         self.__user_scroll_area.setWidget(self.__user_scroll_area_widget)
+        self.add_demo_users()
 
-        for i in range(50):
-            act = random.randint(0, 6)
-            if act == 0:
-                act = 'ban'
-            elif act == 1:
-                act = 'mute'
-            elif act == 2:
-                act = "warning"
-            else:
-                act = "pass"
-            usr = User.User(f"User {i + 1}", self.__user_path, act)
-            self.__add_user(usr)
 
         self.__message_scroll_area = QScrollArea()
         self.__message_scroll_area.setWidgetResizable(True)
         self.__message_scroll_area_widget = QWidget()
         self.__message_scroll_area_layout = QVBoxLayout(self.__message_scroll_area_widget)
         self.__message_scroll_area.setWidget(self.__message_scroll_area_widget)
-
-        for i in range(50):
-            act = random.randint(0, 6)
-            if act == 0:
-                act = 'ban'
-            elif act == 1:
-                act = 'mute'
-            elif act == 2:
-                act = "warning"
-            else:
-                act = "pass"
-            msg = Message.Message(self.__user_list[i], f"Message {i + 1}", act)
-            self.__add_message(msg)
+        self.add_demo_messages()
 
         buttons_layout = QHBoxLayout()
 
@@ -131,6 +108,32 @@ class MainForm(QWidget):
     def cancel_selection(self):
         self.setDisabled(False)
 
+    def add_demo_messages(self):
+        for i in range(50):
+            act = random.randint(0, 6)
+            if act == 0:
+                act = 'ban'
+            elif act == 1:
+                act = 'mute'
+            elif act == 2:
+                act = "warning"
+            else:
+                act = "pass"
+            msg = Message.Message(self.__user_list[i], f"Message {i + 1}", act)
+            self.__add_message(msg)
+    def add_demo_users(self):
+        for i in range(50):
+            act = random.randint(0, 6)
+            if act == 0:
+                act = 'ban'
+            elif act == 1:
+                act = 'mute'
+            elif act == 2:
+                act = "warning"
+            else:
+                act = "pass"
+            usr = User.User(f"User {i + 1}", self.__user_path, act)
+            self.__add_user(usr)
 
 
 def run_app():
