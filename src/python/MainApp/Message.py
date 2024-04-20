@@ -5,13 +5,13 @@ class Message:
     __message_id = ''
     __user: User
     __message_text = ''
-    __status = ''
+    __message_status = ''
 
     def __init__(self, user: User, message, status):
         self.__message_id = uuid.uuid4()
         self.__message_text = message
         self.__user= user
-        self.__status = status
+        self.__message_status = status
 
     def get_message(self):
         return self.__message_text
@@ -23,5 +23,5 @@ class Message:
         return self.__message_id
 
     def get_status(self):
-        return self.__status
+        return self.__message_status
 

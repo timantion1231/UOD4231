@@ -7,13 +7,13 @@ class User:
     __user_id = ''
     __username = ''
     __avatar_path = ''
-    __status = ''
+    __user_status = ''
 
     def __init__(self, username, avatar_path='resources/user_icon.png', status='none'):
         self.__user_id = uuid.uuid4()
         self.__username = username
         self.__avatar_path = avatar_path
-        self.__status = status
+        self.__user_status = status
 
     def get_user_id(self):
         return self.__user_id
@@ -28,10 +28,10 @@ class User:
         return self.__avatar_path
 
     def get_status(self):
-        return self.__status
+        return self.__user_status
 
     def add_message(self, message: Message):
         self.__messages_id.append(message.get_message_id())
 
     def change_status(self, status):
-        self.__status = status
+        self.__user_status = status
