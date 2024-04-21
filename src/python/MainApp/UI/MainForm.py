@@ -28,7 +28,7 @@ class MainForm(QWidget):
 
     __message_field = None
 
-    __selected_message_widgets = []
+    __selected_message_widgets = [MessageWidget]
 
     __message_widget = None
 
@@ -56,12 +56,19 @@ class MainForm(QWidget):
 
         ban_button = QPushButton("Бан")
         ban_button.setStyleSheet('background-color: red;')
+        ban_button.clicked.connect(self.ban_click)
+
         mute_button = QPushButton("Мут")
         mute_button.setStyleSheet('background-color: yellow;')
+        mute_button.clicked.connect(self.mute_click)
+
         warning_button = QPushButton("Предупреждение")
         warning_button.setStyleSheet('background-color: green;')
+        warning_button.clicked.connect(self.warning_click)
+
         skip_button = QPushButton("Пропустить")
         skip_button.setStyleSheet('background-color: cyan;')
+        skip_button.clicked.connect(self.skip_click)
 
         buttons_layout.addWidget(ban_button)
         buttons_layout.addWidget(mute_button)
@@ -153,6 +160,28 @@ class MainForm(QWidget):
                 act = "pass"
             usr = User.User(f"User {i + 1}", self.__user_path, act)
             self.__add_user(usr)
+
+    def mute_click(self):
+        pass
+
+    def ban_click(self):
+        pass
+
+    def warning_click(self):
+        pass
+
+    def skip_click(self):
+        pass
+
+    def change_message_status(self, message: Message, status):
+        pass
+
+    def change_user_status(self, user: User, status):
+        pass
+
+    def __add_user_to_blacklist(self, user: User):
+        pass
+
 
 
 def run_app():
