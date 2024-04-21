@@ -28,6 +28,10 @@ class MainForm(QWidget):
 
     __message_field = None
 
+    __selected_message_widgets = []
+
+    __message_widget = None
+
     def __init__(self):
         super(MainForm, self).__init__()
         self.setGeometry(150, 150, 800, 800)
@@ -85,8 +89,10 @@ class MainForm(QWidget):
 
     def __add_message(self, message: Message):
 
-        self.__message_scroll_area_layout.addWidget(
-            MessageWidget(message))
+        self.__message_widget = MessageWidget(message)
+        self.__message_widget.clicked.connect(self.on_message_widget_clicked)
+
+        self.__message_scroll_area_layout.addWidget(self.__message_widget)
 
         self.__grid_layout.addWidget(self.__message_scroll_area, 0, 1)
         self.__message_list.append(message)
@@ -107,6 +113,19 @@ class MainForm(QWidget):
 
     def cancel_selection(self):
         self.setDisabled(False)
+
+    def add_selected_message_widget(self, message_widget):
+        # Добавить виджет сообщения в список выделенных элементов
+        self.__selected_message_widgets.append(message_widget)
+        message_widget.set_selected(True)
+
+    def on_message_widget_clicked(self):
+        sender_widget = self.sender()  # Получаем отправителя события
+        if sender_widget in self.__selected_message_widgets:
+            self.__selected_message_widgets.remove(sender_widget)
+            sender_widget.set_selected(False)
+        else:
+            self.add_selected_message_widget(sender_widget)
 
     def add_demo_messages(self):
         for i in range(50):

@@ -2,38 +2,59 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QScrollArea, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QTextEdit
 from PyQt5.QtGui import QPixmap, QColor
 import Message
-
+from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtWidgets import QWidget
 class MessageWidget(QWidget):
     __message: Message
-    #, username, message, action
+    clicked = pyqtSignal()
+    __selected = False
+    __color = None
+    __text_color = None
+    __username_label = None
+    __text_label = None
     def __init__(self, message:Message):
         super(MessageWidget, self).__init__()
         self.__message = message
         status = message.get_status()
         if status == 'ban':
-            background_color = "red"
+            self.__color = "red"
+            self.__text_color = self.__color
         elif status == 'mute':
-            background_color = "yellow"
+            self.__color = "yellow"
+            self.__text_color = self.__color
         elif status == 'warning':
-            background_color = "green"
+            self.__color = "green"
+            self.__text_color = self.__color
         else:
-            background_color = "transparent"
+            self.__color = "transparent"
+            self.__text_color = "black"
 
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
 
-        # pixmap = QPixmap(image_path)
-        # image_label = QLabel()
-        # image_label.setPixmap(pixmap)
         messages = message.get_user_from_message().get_username()
-        username_label = QLabel(messages)
-        username_label.setStyleSheet("color: black; font-weight: bold;")
+        self.__username_label = QLabel(messages)
+        self.__username_label.setStyleSheet("color: black; font-weight: bold;")
 
-        text_label = QLabel(message.get_message())
+        self.__text_label = QLabel(message.get_message())
+        self.__text_label.setStyleSheet("color: black; font-weight: bold;")
 
-        #layout.addWidget(image_label)
-        layout.addWidget(username_label)
-        layout.addWidget(text_label)
+        layout.addWidget(self.__username_label)
+        layout.addWidget(self.__text_label)
 
-        self.setStyleSheet(f"background-color: {background_color};")
+        self.setStyleSheet(f"background-color: {self.__color};")
         self.setLayout(layout)
+
+    def mousePressEvent(self, event):
+        self.clicked.emit()
+
+    def set_selected(self, selected):
+        self.selected = selected
+        if self.selected:
+            self.setStyleSheet("background-color: lightblue;")
+            self.__text_label.setStyleSheet(f"color: {self.__text_color}; font-weight: bold;")
+            self.__username_label.setStyleSheet(f"color: {self.__text_color}; font-weight: bold;")
+        else:
+            self.setStyleSheet(f"background-color: {self.__color};")
+            self.__text_label.setStyleSheet("color: black; font-weight: bold;")
+            self.__username_label.setStyleSheet(f"color: {self.__text_color}; font-weight: bold;")
