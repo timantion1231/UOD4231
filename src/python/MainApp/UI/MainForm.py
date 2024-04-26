@@ -100,7 +100,7 @@ class MainForm(QWidget):
         self.__user_list.append(user)
 
     def __add_message(self, message: Message):
-
+        message = self.__ai.get_emotion(message)
         self.__message_widget = MessageWidget(message)
         self.__message_widget.clicked.connect(self.on_message_widget_clicked)
 
@@ -120,7 +120,7 @@ class MainForm(QWidget):
         print(f"Выбран пользователь в главной форме: {user.get_username()}")
         self.setDisabled(False)
         msg_text = self.__message_field.toPlainText()
-        msg = Message.Message(user, msg_text, self.__ai)
+        msg = Message.Message(user, msg_text)
         self.__add_message(msg)
 
     def cancel_selection(self):
@@ -152,7 +152,7 @@ class MainForm(QWidget):
                 act = "warning"
             else:
                 act = "pass"
-            msg = Message.Message(self.__user_list[i], f"Message {i + 1}", self.__ai)
+            msg = Message.Message(self.__user_list[i], f"Message {i + 1}")
             self.__add_message(msg)
 
     def add_demo_users(self):
@@ -174,6 +174,9 @@ class MainForm(QWidget):
             message = widget.get_message()
             if message:
                 self.change_message_status(message, 'mute')
+
+
+
 
     def ban_click(self):
         for widget in self.__selected_message_widgets:

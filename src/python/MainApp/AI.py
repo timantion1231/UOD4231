@@ -7,6 +7,9 @@ from tensorflow.keras.layers import Embedding, LSTM, Dense, Dropout
 from tensorflow.keras.optimizers import Adam
 import string
 
+from Message import *
+
+
 class ArtInt:
 
     train_path = f'resources/datasets/train.csv'
@@ -22,13 +25,19 @@ class ArtInt:
     embedding_dim = 100
     num_classes = 7  # no emotion (0), anger (1), disgust (2), fear (3), happiness (4), sadness (5), surprise (6)
 
+    model = None
+    tokenizer = None
+
     def __init__(self):
         self.prepare_data()
         self.fit_model()
 
 
-    def get_emotion(self, text):
-        return "pass"
+    def get_emotion(self, msg: Message):
+        text = msg.get_message()
+        emo = self.predict_emotion("I am so happy today!")
+        msg.set_emotion(emo)
+        return msg
 
     def prepare_data(self):
         data_train = pd.read_csv(self.train_path)
@@ -60,11 +69,11 @@ class ArtInt:
 
     def fit_model(self):
         # Токенизируйте тексты
-        tokenizer = Tokenizer(num_words=self.max_words)
-        tokenizer.fit_on_texts(self.train_text)
+        self.tokenizer = Tokenizer(num_words=self.max_words)
+        self.tokenizer.fit_on_texts(self.train_text)
 
-        train_sequences = tokenizer.texts_to_sequences(self.train_text)
-        test_sequences = tokenizer.texts_to_sequences(self.test_text)
+        train_sequences = self.tokenizer.texts_to_sequences(self.train_text)
+        test_sequences = self.tokenizer.texts_to_sequences(self.test_text)
 
         # Добавьте нулевую вставку для достижения одинаковой длины последовательностей
         train_padded = pad_sequences(train_sequences, maxlen=self.max_len)
@@ -75,17 +84,31 @@ class ArtInt:
         self.test_emo = np.array(self.test_emo[:len(test_padded)])  # Убедитесь, что количество примеров совпадает
 
         # Определите архитектуру модели
-        model = Sequential()
-        model.add(Embedding(input_dim=self.max_words, output_dim=self.embedding_dim))
-        model.add(LSTM(units=32, dropout=0.2, recurrent_dropout=0.2))
-        model.add(Dense(units=self.num_classes, activation='softmax'))
+        self.model = Sequential()
+        self.model.add(Embedding(input_dim=self.max_words, output_dim=self.embedding_dim))
+        self.model.add(LSTM(units=32, dropout=0.2, recurrent_dropout=0.2))
+        self.model.add(Dense(units=self.num_classes, activation='softmax'))
 
         # Определите оптимизатор и функцию потерь
         optimizer = Adam()
         loss = 'sparse_categorical_crossentropy'
         metrics = ['accuracy']
 
-        model.compile(optimizer=optimizer, loss=loss, metrics=metrics)
+        self.model.compile(optimizer=optimizer, loss=loss, metrics=metrics)
 
         # Обучите модель
-        model.fit(train_padded, self.train_emo, validation_data=(test_padded, self.test_emo), epochs=10, batch_size=32)
+        self.model.fit(train_padded, self.train_emo, validation_data=(test_padded, self.test_emo), epochs=10, batch_size=32)
+
+    def predict_emotion(self, text):
+        # Токенизируйте текст
+        sequence = self.tokenizer.texts_to_sequences([text])
+        # Добавьте нулевую вставку для достижения одинаковой длины последовательностей
+        padded_sequence = pad_sequences(sequence, maxlen=self.max_len)
+        # Предскажите эмоцию с помощью модели
+        prediction = self.model.predict(padded_sequence)
+        # Получите индекс эмоции с наибольшей вероятностью
+        predicted_emotion_index = np.argmax(prediction, axis=1)[0]
+        # Получите название эмоции по индексу
+        predicted_emotion = ['no emotion', 'anger', 'disgust', 'fear', 'happiness', 'sadness', 'surprise'][
+            predicted_emotion_index]
+        return predicted_emotion
