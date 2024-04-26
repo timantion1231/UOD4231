@@ -8,11 +8,11 @@ class Message:
     __message_status = None
     ai: ArtInt
 
-    def __init__(self, user: User, message):
+    def __init__(self, user: User, message, ai):
         self.__message_id = uuid.uuid4()
         self.__message_text = message
         self.__user = user
-        self.ai = ArtInt()
+        self.ai = ai
         self.__message_status = self.ai.get_emotion(message)
 
 

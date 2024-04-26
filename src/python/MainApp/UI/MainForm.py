@@ -3,7 +3,7 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QScrollArea, QVBoxLayout, QHBoxLayout, QLabel, \
     QPushButton, QLineEdit, QTextEdit
 
-import AI
+from AI import *
 from UI.usersWidget import UserWidget
 from UI.MessageWidgets import MessageWidget
 import User
@@ -34,8 +34,11 @@ class MainForm(QWidget):
 
     __message_widget = None
 
+    __ai: ArtInt
+
 
     def __init__(self):
+        self.__ai = ArtInt()
         super(MainForm, self).__init__()
         self.setGeometry(150, 150, 800, 800)
         self.__grid_layout = QGridLayout(self)
@@ -87,7 +90,6 @@ class MainForm(QWidget):
 
         self.__grid_layout.addWidget(self.__message_field, 2, 0)
         self.__grid_layout.addWidget(send_button, 2, 1)
-        self.ai = AI.ArtInt()
 
     def __add_user(self, user: User):
 
@@ -118,7 +120,7 @@ class MainForm(QWidget):
         print(f"Выбран пользователь в главной форме: {user.get_username()}")
         self.setDisabled(False)
         msg_text = self.__message_field.toPlainText()
-        msg = Message.Message(user, msg_text)
+        msg = Message.Message(user, msg_text, self.__ai)
         self.__add_message(msg)
 
     def cancel_selection(self):
@@ -150,7 +152,7 @@ class MainForm(QWidget):
                 act = "warning"
             else:
                 act = "pass"
-            msg = Message.Message(self.__user_list[i], f"Message {i + 1}")
+            msg = Message.Message(self.__user_list[i], f"Message {i + 1}", self.__ai)
             self.__add_message(msg)
 
     def add_demo_users(self):
@@ -192,7 +194,8 @@ class MainForm(QWidget):
                 self.change_message_status(message, 'pass')
 
     def change_message_status(self, message: Message, status):
-        for widget in self.__selected_message_widgets[:]:
+        selected_widgets_copy = self.__selected_message_widgets.copy()
+        for widget in selected_widgets_copy:
             if widget.get_message() == message:
                 widget.set_selected(False)
                 widget.setStyleSheet(f"background-color: {self.get_color_by_status(status)};")

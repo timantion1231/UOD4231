@@ -1,4 +1,4 @@
-# import AI
+from AI import *
 import sys
 from PyQt5.QtWidgets import QApplication
 from UI.MainForm import MainForm, run_app
