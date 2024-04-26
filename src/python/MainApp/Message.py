@@ -25,3 +25,5 @@ class Message:
     def get_status(self):
         return self.__message_status
 
+    def set_status(self, status):
+        self.__message_status = status

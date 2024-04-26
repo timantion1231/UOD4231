@@ -28,7 +28,7 @@ class MainForm(QWidget):
 
     __message_field = None
 
-    __selected_message_widgets = [MessageWidget]
+    __selected_message_widgets = []
 
     __message_widget = None
 
@@ -43,7 +43,6 @@ class MainForm(QWidget):
         self.__user_scroll_area_layout = QVBoxLayout(self.__user_scroll_area_widget)
         self.__user_scroll_area.setWidget(self.__user_scroll_area_widget)
         self.add_demo_users()
-
 
         self.__message_scroll_area = QScrollArea()
         self.__message_scroll_area.setWidgetResizable(True)
@@ -131,8 +130,10 @@ class MainForm(QWidget):
         if sender_widget in self.__selected_message_widgets:
             self.__selected_message_widgets.remove(sender_widget)
             sender_widget.set_selected(False)
+            sender_widget.update()
         else:
             self.add_selected_message_widget(sender_widget)
+            sender_widget.update()
 
     def add_demo_messages(self):
         for i in range(50):
@@ -147,6 +148,7 @@ class MainForm(QWidget):
                 act = "pass"
             msg = Message.Message(self.__user_list[i], f"Message {i + 1}", act)
             self.__add_message(msg)
+
     def add_demo_users(self):
         for i in range(50):
             act = random.randint(0, 6)
@@ -162,7 +164,10 @@ class MainForm(QWidget):
             self.__add_user(usr)
 
     def mute_click(self):
-        pass
+        for widget in self.__selected_message_widgets:
+            message = widget.get_message()
+            if message:
+                self.change_message_status(message, 'mute')
 
     def ban_click(self):
         pass
@@ -174,7 +179,27 @@ class MainForm(QWidget):
         pass
 
     def change_message_status(self, message: Message, status):
-        pass
+        for widget in self.__selected_message_widgets:
+            if widget.get_message() == message:
+                widget.set_selected(False)
+                print(status)
+                widget.setStyleSheet(f"background-color: {self.get_color_by_status(status)};")
+                message.set_status(status)
+                widget.update()
+
+
+
+    def get_color_by_status(self, status: str) -> str:
+        if status == 'ban':
+            return 'red'
+        elif status == 'mute':
+            return 'yellow'
+        elif status == 'warning':
+            return 'green'
+        elif status == 'pass':
+            return 'cyan'
+        else:
+            return 'white'
 
     def change_user_status(self, user: User, status):
         pass
@@ -183,9 +208,9 @@ class MainForm(QWidget):
         pass
 
 
-
 def run_app():
     app = QApplication(sys.argv)
     main_form = MainForm()
     main_form.show()
     sys.exit(app.exec_())
+

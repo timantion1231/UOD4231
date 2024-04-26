@@ -1,9 +1,12 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QScrollArea, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QTextEdit
+from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QScrollArea, QVBoxLayout, QHBoxLayout, QLabel, \
+    QPushButton, QLineEdit, QTextEdit
 from PyQt5.QtGui import QPixmap, QColor
 import Message
 from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtWidgets import QWidget
+
+
 class MessageWidget(QWidget):
     __message: Message
     clicked = pyqtSignal()
@@ -12,7 +15,8 @@ class MessageWidget(QWidget):
     __text_color = None
     __username_label = None
     __text_label = None
-    def __init__(self, message:Message):
+
+    def __init__(self, message: Message):
         super(MessageWidget, self).__init__()
         self.__message = message
         status = message.get_status()
@@ -49,8 +53,8 @@ class MessageWidget(QWidget):
         self.clicked.emit()
 
     def set_selected(self, selected):
-        self.selected = selected
-        if self.selected:
+        self.__selected = selected
+        if self.__selected:
             self.setStyleSheet("background-color: lightblue;")
             self.__text_label.setStyleSheet(f"color: {self.__text_color}; font-weight: bold;")
             self.__username_label.setStyleSheet(f"color: {self.__text_color}; font-weight: bold;")
@@ -58,3 +62,22 @@ class MessageWidget(QWidget):
             self.setStyleSheet(f"background-color: {self.__color};")
             self.__text_label.setStyleSheet("color: black; font-weight: bold;")
             self.__username_label.setStyleSheet(f"color: {self.__text_color}; font-weight: bold;")
+            self.__username_label.setStyleSheet(f"color: black; font-weight: bold;")
+
+    def get_message(self):
+        return self.__message
+
+    def update(self):
+        status = self.__message.get_status()
+        if status == 'ban':
+            self.__color = "red"
+            self.__text_color = self.__color
+        elif status == 'mute':
+            self.__color = "yellow"
+            self.__text_color = self.__color
+        elif status == 'warning':
+            self.__color = "green"
+            self.__text_color = self.__color
+        else:
+            self.__color = "transparent"
+            self.__text_color = "black"
