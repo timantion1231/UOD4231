@@ -6,7 +6,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Embedding, LSTM, Dense, Dropout
 from tensorflow.keras.optimizers import Adam
 import string
-
+import re
 from Message import *
 
 
@@ -29,7 +29,10 @@ class ArtInt:
     tokenizer = None
 
     def __init__(self):
-        self.prepare_data()
+        data_train = pd.read_csv(self.train_path)
+        data_test = pd.read_csv(self.test_path)
+        self.train_text, self.train_emo = self.prepare_data(data_train)
+        self.test_text, self.test_emo = self.prepare_data(data_test)
         self.fit_model()
 
 
@@ -39,33 +42,33 @@ class ArtInt:
         msg.set_emotion(emo)
         return msg
 
-    def prepare_data(self):
-        data_train = pd.read_csv(self.train_path)
-        data_test = pd.read_csv(self.test_path)
-
-        self.train_text = data_train.dialog.loc[data_train.index[0]]
-        self.train_text = self.train_text.split('\n')
-
-        self.test_text = data_test.dialog.loc[data_test.index[0]]
-        self.test_text = self.test_text.split('\n')
-        print(self.train_text)
-        print(self.test_text)
-        print('self.test_emo')
-
-        self.train_emo = data_train.emotion.loc[data_train.index[0]]
-        self.train_emo = self.train_emo.split(' ')
-
-        self.test_emo = data_test.emotion.loc[data_test.index[0]]
-        self.test_emo = self.test_emo.split(' ')
-
-        for i in range(len(self.train_emo)):
-            self.train_emo[i] = self.train_emo[i].translate(str.maketrans('', '', string.punctuation))
-            self.train_emo[i] = int(self.train_emo[i])
-
-        for i in range(len(self.test_emo)):
-            self.test_emo[i] = self.test_emo[i].translate(str.maketrans('', '', string.punctuation))
-            self.test_emo[i] = int(self.test_emo[i])
-        print('self.train_emo')
+    # def prepare_data(self):
+    #     data_train = pd.read_csv(self.train_path)
+    #     data_test = pd.read_csv(self.test_path)
+    #
+    #     self.train_text = data_train.dialog.loc[data_train.index[0]]
+    #     self.train_text = self.train_text.split('\n')
+    #
+    #     self.test_text = data_test.dialog.loc[data_test.index[0]]
+    #     self.test_text = self.test_text.split('\n')
+    #     print(self.train_text)
+    #     print(self.test_text)
+    #     print('self.test_emo')
+    #
+    #     self.train_emo = data_train.emotion.loc[data_train.index[0]]
+    #     self.train_emo = self.train_emo.split(' ')
+    #
+    #     self.test_emo = data_test.emotion.loc[data_test.index[0]]
+    #     self.test_emo = self.test_emo.split(' ')
+    #
+    #     for i in range(len(self.train_emo)):
+    #         self.train_emo[i] = self.train_emo[i].translate(str.maketrans('', '', string.punctuation))
+    #         self.train_emo[i] = int(self.train_emo[i])
+    #
+    #     for i in range(len(self.test_emo)):
+    #         self.test_emo[i] = self.test_emo[i].translate(str.maketrans('', '', string.punctuation))
+    #         self.test_emo[i] = int(self.test_emo[i])
+    #     print('self.train_emo')
 
     def fit_model(self):
         # Токенизируйте тексты
@@ -112,3 +115,29 @@ class ArtInt:
         predicted_emotion = ['no emotion', 'anger', 'disgust', 'fear', 'happiness', 'sadness', 'surprise'][
             predicted_emotion_index]
         return predicted_emotion
+
+
+    def prepare_data(self, data):
+        train_t = []
+        train_e = []
+        lst1 = []
+        lst = [i for i in data['dialog']]  # Преобразование из object в list
+        for i in range(0, len(data['dialog'])):
+            lst[i] = re.split('[.?]\s', lst[i])
+        lst1.append(lst[0])
+        for i in range(1, len(lst)):
+            lst1[0] = lst[0]+lst[i]
+        for i in range(len(data.dialog)):
+            test_emo = data.emotion.loc[data.index[i]]
+            test_emo = test_emo.split(' ')
+            for j in range(len(test_emo)):
+                test_emo[j] = test_emo[j].translate(str.maketrans('', '', string.punctuation))
+                test_emo[j] = int(test_emo[j])
+            train_t.append(test_emo)
+
+        for i in range(1, len(train_t)):
+            train_t[0] = train_t[0]+train_t[i]
+        train_t = train_t[0]
+        train_e = lst
+        print(train_e[0])
+        return train_e, train_t
