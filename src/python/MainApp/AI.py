@@ -3,7 +3,7 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 import re
 
 class ArtInt:
-    def get_tokens_from_text(texts):
+    def get_tokens_from_text(self, texts):
         sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s', texts)
         tokenizer = Tokenizer()
         # Обучение токенизатора на тексте
@@ -26,5 +26,7 @@ class ArtInt:
         pass
 
     def get_emotion(self, text):
+        tokens, word_index = self.get_tokens_from_text(text)
+        print(tokens, '\n', '---------------', '\n', word_index)
         return "pass"
 
