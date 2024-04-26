@@ -170,22 +170,33 @@ class MainForm(QWidget):
                 self.change_message_status(message, 'mute')
 
     def ban_click(self):
-        pass
+        for widget in self.__selected_message_widgets:
+            message = widget.get_message()
+            if message:
+                self.change_message_status(message, 'ban')
 
     def warning_click(self):
-        pass
+        for widget in self.__selected_message_widgets:
+            message = widget.get_message()
+            if message:
+                self.change_message_status(message, 'warning')
 
     def skip_click(self):
-        pass
+        for widget in self.__selected_message_widgets:
+            message = widget.get_message()
+            if message:
+                self.change_message_status(message, 'pass')
 
     def change_message_status(self, message: Message, status):
-        for widget in self.__selected_message_widgets:
+        for widget in self.__selected_message_widgets[:]:
             if widget.get_message() == message:
                 widget.set_selected(False)
-                print(status)
                 widget.setStyleSheet(f"background-color: {self.get_color_by_status(status)};")
                 message.set_status(status)
                 widget.update()
+                self.__selected_message_widgets.remove(widget)
+        for widget in self.__selected_message_widgets:
+            widget.set_selected(True)
 
 
 
