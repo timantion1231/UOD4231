@@ -2,6 +2,8 @@ import random
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QScrollArea, QVBoxLayout, QHBoxLayout, QLabel, \
     QPushButton, QLineEdit, QTextEdit
+
+import AI
 from UI.usersWidget import UserWidget
 from UI.MessageWidgets import MessageWidget
 import User
@@ -31,6 +33,7 @@ class MainForm(QWidget):
     __selected_message_widgets = []
 
     __message_widget = None
+
 
     def __init__(self):
         super(MainForm, self).__init__()
@@ -84,6 +87,7 @@ class MainForm(QWidget):
 
         self.__grid_layout.addWidget(self.__message_field, 2, 0)
         self.__grid_layout.addWidget(send_button, 2, 1)
+        self.ai = AI.ArtInt()
 
     def __add_user(self, user: User):
 
@@ -114,7 +118,7 @@ class MainForm(QWidget):
         print(f"Выбран пользователь в главной форме: {user.get_username()}")
         self.setDisabled(False)
         msg_text = self.__message_field.toPlainText()
-        msg = Message.Message(user, msg_text, 'f')
+        msg = Message.Message(user, msg_text)
         self.__add_message(msg)
 
     def cancel_selection(self):
@@ -146,7 +150,7 @@ class MainForm(QWidget):
                 act = "warning"
             else:
                 act = "pass"
-            msg = Message.Message(self.__user_list[i], f"Message {i + 1}", act)
+            msg = Message.Message(self.__user_list[i], f"Message {i + 1}")
             self.__add_message(msg)
 
     def add_demo_users(self):
